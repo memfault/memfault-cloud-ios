@@ -1,0 +1,8 @@
+# Oldest iOS that CircleCI supports with Xcode 10.1:
+# See https://circleci.com/docs/2.0/testing-ios/#supported-xcode-versions
+device "iPhone 7 (10.3.1)"
+scheme "MemfaultCloud_Tests"
+workspace "Example/MemfaultCloud.xcworkspace"
+output_directory "build/test_output"
+derived_data_path "build/derivedData"
+buildlog_path "build"

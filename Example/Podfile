@@ -1,0 +1,18 @@
+use_frameworks!
+
+platform :ios, '10.0'
+
+target 'MemfaultCloud_DemoApp' do
+  pod 'MemfaultCloud', :path => '../'
+
+  target 'MemfaultCloud_Tests' do
+    inherit! :search_paths
+
+    # Pin to specific versions, to make it possible to cache the Pods directory correctly in CI:
+    pod 'Specta', '= 1.0.7'
+    pod 'OCMockito', '= 5.1.1'
+    pod 'OCHamcrest', '= 7.1.1'
+    pod 'Expecta', '= 1.0.6'
+
+  end
+end

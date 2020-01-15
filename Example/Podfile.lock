@@ -1,6 +1,6 @@
 PODS:
   - Expecta (1.0.6)
-  - MemfaultCloud (1.0.0)
+  - MemfaultCloud (1.0.1)
   - OCHamcrest (7.1.1)
   - OCMockito (5.1.1):
     - OCHamcrest (~> 7.0)
@@ -14,7 +14,7 @@ DEPENDENCIES:
   - Specta (= 1.0.7)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Expecta
     - OCHamcrest
     - OCMockito
@@ -26,11 +26,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
-  MemfaultCloud: 420a97310c7ea97da167338c8e04f3605c72cc4a
+  MemfaultCloud: 4595b33f2adffc93e77fe02a325e30e9a00da3f1
   OCHamcrest: 3506736397451c35d8763ff0a9b13492e544115f
   OCMockito: eccb29c256cbdd6c7bc206718cbb06ef737daa8b
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
 
 PODFILE CHECKSUM: b2baf644789fa44a22fec874c96a74f27e5c89ff
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.8.4

@@ -325,6 +325,7 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
     NSAssert(chunks, @"chunks must not be nil");
     NSAssert(chunks.count > 0, @"chunks array cannot be empty");
     for (NSData *chunk in chunks) {
+        (void)chunk;
         NSAssert(chunk && [chunk isKindOfClass:[NSData class]], @"each chunk must be an instance inheriting from NSData");
     }
     NSAssert(deviceSerial && [deviceSerial isKindOfClass:[NSString class]], @"deviceSerial must be an instance inheriting from NSString");

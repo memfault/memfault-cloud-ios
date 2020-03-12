@@ -1,6 +1,6 @@
 //! @file
 //!
-//! Copyright (c) 2020-Present Memfault, Inc.
+//! Copyright (c) Memfault, Inc.
 //! See LICENSE for details
 
 #import <Foundation/Foundation.h>
@@ -10,15 +10,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MemfaultDeviceInfo;
 @class MemfaultOtaPackage;
+@protocol MemfaultChunkQueue;
+@protocol MemfaultChunkQueueProvider;
+@protocol MemfaultChunkSender;
 
 typedef NS_ENUM(NSUInteger, MemfaultLogLevel);
 
 //! Configuration dictionary key to specify your Memfault API key.
-extern NSString* const kMFLTProjectKey;
+extern NSString *const kMFLTProjectKey;
 
 //! Configuration dictionary key to specify Memfault API url to use
 //! (Not needed by default)
-extern NSString* const kMFLTApiBaseURL;
+extern NSString *const kMFLTApiBaseURL;
 
 //! Configuration dictionary key to specify Memfault Ingress API url to use
 //! (Not needed by default)
@@ -30,33 +33,91 @@ extern NSString *const kMFLTApiChunksBaseURL;
 
 //! Configuration dictionary key to specify NSURLSession to use.
 //! (sharedSession is used by default)
-extern NSString* const kMFLTApiUrlSession;
+extern NSString *const kMFLTApiUrlSession;
+
+//! Configuration dictionary key to specify a custom queue provider.
+//! By default, a memory-backed queuing implementation is used. A custom
+//! implementation can also be provided by implementing the
+//! MemfaultChunkQueueProvider interface.
+//! @see MemfaultChunkQueueProvider
+extern NSString *const kMFLTChunkQueueProvider;
+
 
 @interface MemfaultApi : NSObject
+//! Configures the sharedApi singleton instance. See kMFLT... constants for
+//! possible configuration options.
+//! @note You must only call method once. Calling it a second time will throw an error.
++ (void)configureSharedApi:(NSDictionary *)configuration;
+
+//! The shared singleton instance.
+//! @note You must call +configuredSharedApi: first before calling this method or else an error will be thrown.
+@property(class, readonly) MemfaultApi *sharedApi;
+
+//! Creates a new MemfaultApi instance with given configuration. See kMFLT... constants for
+//! possible configuration options.
+//! @note You should only create one instance in the entire application.
+//! @see +sharedApi for a convenience singleton API.
 + (instancetype)apiWithConfiguration:(NSDictionary *)configuration;
 
 //! Get the latest OTA package release for a given device.
 //! @param deviceInfo Device for which to retrieve the latest release.
 //! @param block Completion block that will be called when the request has completed.
-- (void)getLatestReleaseForDeviceInfo:(MemfaultDeviceInfo *_Nonnull)deviceInfo
+- (void)getLatestReleaseForDeviceInfo:(MemfaultDeviceInfo *)deviceInfo
                            completion:(nullable void(^)(MemfaultOtaPackage *_Nullable latestRelease, BOOL isDeviceUpToDate,
                                                         NSError *_Nullable error))block;
 
-//! Uploads one or more chunks from the given device to Memfault for processing.
+//! Gets the chunk sender for the given device serial.
+- (id<MemfaultChunkSender>)chunkSenderWithDeviceSerial:(NSString *_Nonnull)deviceSerial;
+
+@end
+
+
+//! Interface of an object that sequentially uploads enqueued chunks
+//! from a given device to Memfault for processing.
+@protocol MemfaultChunkSender
+//! The serial number of the device for which this sender sends chunks.
+@property (readonly) NSString *deviceSerial;
+
+//! Enqueue the chunks and and attempt to upload all enqueued chunks for the given device.
 //! The chunks are to be obtained by the device through the Memfault Firmware SDK
 //! (https://github.com/memfault/memfault-firmware-sdk)
 //! It provides a streamlined way of getting arbitrary data (coredumps, events,
 //! heartbeats, etc.) out of devices and into Memfault.
 //! Check out the conceptual documentation (https://mflt.io/2MGMoIl) to learn more.
-//! @note After calling -postChunks:deviceSerial:completion:, it is only allowed to call the method
-//! again after the completion block has been called. If the completion block is called with an error,
-//! the failed chunks must be sent again before sending the next set of chunks. Otherwise the
-//! chunks will arrive out-of-order with data loss as result.
 //! @param chunks An array of data objects, one for each chunk. The array must not be empty.
-- (void)postChunks:(NSArray<NSData *> *_Nonnull)chunks
-      deviceSerial:(NSString *_Nonnull)deviceSerial
-        completion:(void(^)(NSError *_Nullable error))block;
+- (void)postChunks:(NSArray<NSData *>*)chunks;
 
+//! Attempt to upload all enqueued chunks for the given device.
+- (void)postChunks;
+
+//! Stop sending chunks for this device.
+//! This can be used to pause sending chunks. To resume sending, call -postChunks.
+- (void)stop;
+@end
+
+
+//! Interface of a chunk queue.
+//! @see MemfaultChunkQueueProvider and kMFLTChunkQueueProvider
+@protocol MemfaultChunkQueue
+//! Number of chunks in the queue.
+@property (readonly) NSUInteger count;
+
+//! Enqueue the chunks; return NO if not successful.
+- (BOOL)addChunks:(NSArray<NSData *>*)chunks;
+
+//! Return a list with at most the first `count` items from the head of the queue.
+- (NSArray<NSData *>*)peek:(NSUInteger)count;
+
+//! Remove at most the first `count` items from head of the queue.
+- (void)drop:(NSUInteger)count;
+@end
+
+
+//! Interface of an object that provides chunk queues.
+//! @see kMFLTChunkQueueProvider
+@protocol MemfaultChunkQueueProvider
+//! Gets the queue for a given device serial.
+- (id<MemfaultChunkQueue>)queueWithDeviceSerial:(NSString *)deviceSerial;
 @end
 
 
@@ -66,10 +127,10 @@ extern NSString* const kMFLTApiUrlSession;
                      hardwareVersion:(NSString *)hardwareVersion
                      softwareVersion:(NSString *)softwareVersion
                         softwareType:(NSString *)softwareType;
-@property (readonly, nonnull) NSString *softwareVersion;
-@property (readonly, nonnull) NSString *softwareType;
-@property (readonly, nonnull) NSString *deviceSerial;
-@property (readonly, nonnull) NSString *hardwareVersion;
+@property (readonly) NSString *softwareVersion;
+@property (readonly) NSString *softwareType;
+@property (readonly) NSString *deviceSerial;
+@property (readonly) NSString *hardwareVersion;
 @end
 
 

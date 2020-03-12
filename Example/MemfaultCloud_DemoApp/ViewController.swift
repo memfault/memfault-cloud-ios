@@ -1,5 +1,5 @@
 ///
-/// Copyright (c) 2020-Present Memfault, Inc.
+/// Copyright (c) Memfault, Inc.
 /// See LICENSE for details
 ///
 

@@ -13,12 +13,15 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6290DAC22E90A81F2DF03446 /* Pods_MemfaultCloud_DemoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03118EF0B9B3BC01E836DA89 /* Pods_MemfaultCloud_DemoApp.framework */; };
 		7013651723CCEE1E002C9584 /* TestMemfaultApiPostChunks.m in Sources */ = {isa = PBXBuildFile; fileRef = 7013651623CCEE1D002C9584 /* TestMemfaultApiPostChunks.m */; };
+		707B260B24196B9700000CAB /* TestChunkSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 707B260A24196B9700000CAB /* TestChunkSender.m */; };
 		7086CB0023C8D8F10019D47E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7086CAFF23C8D8F10019D47E /* AppDelegate.swift */; };
 		7086CB0723C8D8F10019D47E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7086CB0523C8D8F10019D47E /* Main.storyboard */; };
 		7086CB0923C8D8F40019D47E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7086CB0823C8D8F40019D47E /* Assets.xcassets */; };
 		7086CB0C23C8D8F40019D47E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7086CB0A23C8D8F40019D47E /* LaunchScreen.storyboard */; };
 		7086CB1423C8DACF0019D47E /* MainMenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7086CB1323C8DACF0019D47E /* MainMenuTableViewController.swift */; };
 		7086CB1723CC80100019D47E /* TestMemfaultApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 7086CB1523CC80100019D47E /* TestMemfaultApi.m */; };
+		70EC1F022417D18700224004 /* TestTemporaryChunkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EC1F012417D18700224004 /* TestTemporaryChunkQueue.m */; };
+		70EC1F042417E51B00224004 /* TestChunkSenderRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EC1F032417E51B00224004 /* TestChunkSenderRegistry.m */; };
 		D015AABEA720F7B10EAA6AAE /* Pods_MemfaultCloud_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CDA900D133CA489F9104286 /* Pods_MemfaultCloud_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +51,7 @@
 		64422A639E9762783A1E9226 /* Pods-MemfaultCloud_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_Tests.debug.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		68911372CC3E6985A20D1B6F /* Pods-MemfaultCloud_DemoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_DemoApp.release.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp.release.xcconfig"; sourceTree = "<group>"; };
 		7013651623CCEE1D002C9584 /* TestMemfaultApiPostChunks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMemfaultApiPostChunks.m; sourceTree = "<group>"; };
+		707B260A24196B9700000CAB /* TestChunkSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestChunkSender.m; sourceTree = "<group>"; };
 		7086CAFD23C8D8F10019D47E /* MemfaultCloud_DemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MemfaultCloud_DemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7086CAFF23C8D8F10019D47E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7086CB0623C8D8F10019D47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -56,6 +60,8 @@
 		7086CB0D23C8D8F40019D47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7086CB1323C8DACF0019D47E /* MainMenuTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuTableViewController.swift; sourceTree = "<group>"; };
 		7086CB1523CC80100019D47E /* TestMemfaultApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMemfaultApi.m; sourceTree = "<group>"; };
+		70EC1F012417D18700224004 /* TestTemporaryChunkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTemporaryChunkQueue.m; sourceTree = "<group>"; usesTabs = 0; };
+		70EC1F032417E51B00224004 /* TestChunkSenderRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestChunkSenderRegistry.m; sourceTree = "<group>"; };
 		7C582FDEAC26129EB7FC7564 /* Pods_MemfaultCloudExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloudExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F9B44766A5A44C41E8FAD0F /* Pods-MemfaultCloud_DemoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_DemoApp.debug.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp.debug.xcconfig"; sourceTree = "<group>"; };
 		9CDA900D133CA489F9104286 /* Pods_MemfaultCloud_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloud_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -127,6 +133,9 @@
 			children = (
 				7086CB1523CC80100019D47E /* TestMemfaultApi.m */,
 				7013651623CCEE1D002C9584 /* TestMemfaultApiPostChunks.m */,
+				70EC1F012417D18700224004 /* TestTemporaryChunkQueue.m */,
+				707B260A24196B9700000CAB /* TestChunkSender.m */,
+				70EC1F032417E51B00224004 /* TestChunkSenderRegistry.m */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 			);
 			path = Tests;
@@ -373,8 +382,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				707B260B24196B9700000CAB /* TestChunkSender.m in Sources */,
 				7086CB1723CC80100019D47E /* TestMemfaultApi.m in Sources */,
+				70EC1F022417D18700224004 /* TestTemporaryChunkQueue.m in Sources */,
 				7013651723CCEE1E002C9584 /* TestMemfaultApiPostChunks.m in Sources */,
+				70EC1F042417E51B00224004 /* TestChunkSenderRegistry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

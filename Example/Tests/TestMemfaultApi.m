@@ -1,6 +1,6 @@
 //! @file
 //!
-//! Copyright (c) 2020-Present Memfault, Inc.
+//! Copyright (c) Memfault, Inc.
 //! See LICENSE for details
 
 @import Specta;
@@ -37,7 +37,7 @@ describe(@"MemfaultApi", ^{
     beforeEach(^{
         mockSession = mock([NSURLSession class]);
         api = [[MemfaultApi alloc] initApiWithSession:mockSession projectKey:projectKey apiBaseURL:apiBaseURL
-                                       ingressBaseURL:apiIngressBaseURL chunksBaseURL:apiChunksBaseURL];
+                                       ingressBaseURL:apiIngressBaseURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil];
     });
 
     __auto_type assertDataRequest = ^(NSString *expectedMethod, NSString *expectedURLString, id expectedBodyObject){

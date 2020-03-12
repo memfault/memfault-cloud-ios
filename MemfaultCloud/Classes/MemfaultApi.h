@@ -1,6 +1,6 @@
 //! @file
 //!
-//! Copyright (c) 2020-Present Memfault, Inc.
+//! Copyright (c) Memfault, Inc.
 //! See LICENSE for details
 
 #import "MemfaultCloud.h"
@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
                         projectKey:(NSString *)projectKey
                         apiBaseURL:(NSURL *)apiBaseURL
                     ingressBaseURL:(NSURL *)ingressBaseURL
-                     chunksBaseURL:(NSURL *)chunksBaseURL;
+                     chunksBaseURL:(NSURL *)chunksBaseURL
+                chunkQueueProvider:(id<MemfaultChunkQueueProvider>)chunkQueueProvider;
 
 - (void)postStatusEvent:(NSString *)eventName deviceInfo:(MemfaultDeviceInfo *_Nullable)deviceInfo userInfo:(NSDictionary *_Nullable)userInfo;
 
@@ -24,9 +25,23 @@ NS_ASSUME_NONNULL_BEGIN
         completion:(void(^)(NSError *_Nullable error))completion
           boundary:(NSString *_Nullable)boundary;
 
+//! Low-level method to directly post chunks to Memfault.
+//! It is recommended to enqueue chunks through the "chunk sender" APIs instead because it
+//! handles enqueuing, batching and sequentially posting chunks.
+//! @see -chunkSenderWithDeviceSerial: and -[MemfaultChunkSender postChunks:]
+//! @note After calling -postChunks:deviceSerial:completion:, it is only allowed to call the method
+//! again after the completion block has been called. If the completion block is called with an error,
+//! the failed chunks must be sent again before sending the next set of chunks. Otherwise the
+//! chunks will arrive out-of-order with data loss as result.
+//! @param chunks An array of data objects, one for each chunk. The array must not be empty.
+- (void)postChunks:(NSArray<NSData *> *)chunks
+      deviceSerial:(NSString *)deviceSerial
+        completion:(void(^)(NSError *_Nullable error))block;
+
 - (void)postCoredump:(NSData *)coredumpData;
 
 - (void)postWatchEvent:(id)jsonBlob;
+
 @end
 
 NS_ASSUME_NONNULL_END

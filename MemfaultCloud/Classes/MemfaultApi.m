@@ -1,15 +1,19 @@
 //! @file
 //!
-//! Copyright (c) 2020-Present Memfault, Inc.
+//! Copyright (c) Memfault, Inc.
 //! See LICENSE for details
 
 #import "MemfaultApi.h"
 
 #import "MemfaultCloud.h"
 #import "MFLTApiRequestBuilder.h"
+#import "MFLTBackoff.h"
+#import "MFLTChunkSender.h"
+#import "MFLTChunkSenderRegistry.h"
 #import "MFLTDeviceInfo.h"
 #import "MFLTExtensions.h"
 #import "MFLTLogging.h"
+#import "MFLTTemporaryChunkQueue.h"
 
 NSString *const kMFLTProjectKey = @"apiKey";
 NSString *const kMFLTApiBaseURL = @"apiBaseURL";
@@ -21,8 +25,18 @@ NSString *const MFLTDefaultApiBaseURL = @"https://api.memfault.com";
 NSString *const MFLTDefaultApiIngressBaseURL = @"https://ingress.memfault.com";
 NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
 
+NSString *const kMFLTChunkQueueProvider = @"chunkQueueProvider";
+
 #define kMFLTChunksMinimumRetryDelaySecs (5.0)
 #define kMFLTChunksMinimumDelayBetweenCallsSecs (0.5)
+#define kMFLTChunksBackoffFactor (2)
+#define kMFLTChunksMinimumBackoffSecs (1.0)
+#define kMFLTChunksMaximumBackoffSecs (120.0)
+
+static MemfaultApi *gMemfaultSharedApi;
+
+@interface MemfaultApi (ChunkSenderFactory) <MFLTChunkSenderFactory>
+@end
 
 @implementation MemfaultApi
 {
@@ -31,13 +45,38 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
     // Use with API's that push data into Memfault, such as Events and Coredumps:
     MFLTApiRequestBuilder *_ingressRequestBuilder;
     MFLTApiRequestBuilder *_chunksRequestBuilder;
-    BOOL _chunksRequestPending;
+    MFLTChunkSenderRegistry *_chunkSenderRegistry;
+    id<MemfaultChunkQueueProvider> _chunkQueueProvider;
     dispatch_time_t _chunksLastTime;
+    dispatch_queue_t _chunksDispatchQueue;
+}
+
++ (BOOL)_setSharedApi:(MemfaultApi *)api {
+    static dispatch_once_t onceToken;
+    __block BOOL success = NO;
+    dispatch_once(&onceToken, ^{
+        gMemfaultSharedApi = api;
+        success = YES;
+    });
+    return success;
+}
+
++ (void)configureSharedApi:(NSDictionary *)configuration {
+    MemfaultApi *api = [self apiWithConfiguration:configuration];
+    BOOL success = [self _setSharedApi: api];
+    NSAssert(success, @"+configureSharedApi: should only be called once!");
+    (void)success;
+}
+
++ (MemfaultApi *)sharedApi {
+    NSAssert(gMemfaultSharedApi, @"+configureSharedApi: must be called before using sharedApi");
+    return gMemfaultSharedApi;
 }
 
 - (instancetype)initApiWithSession:(NSURLSession *)session projectKey:(NSString *)projectKey
                         apiBaseURL:(NSURL *)apiBaseURL ingressBaseURL:(NSURL *)ingressBaseURL
                      chunksBaseURL:(NSURL *)chunksBaseURL
+                chunkQueueProvider:(id<MemfaultChunkQueueProvider>)chunkQueueProvider
 {
     self = [super init];
     if (self) {
@@ -46,6 +85,11 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
         _requestBuilder = [[MFLTApiRequestBuilder alloc] initWithApiBaseURL:apiBaseURL projectKey:projectKey];
         _ingressRequestBuilder = [[MFLTApiRequestBuilder alloc] initWithApiBaseURL:ingressBaseURL projectKey:projectKey];
         _chunksRequestBuilder = [[MFLTApiRequestBuilder alloc] initWithApiBaseURL:chunksBaseURL projectKey:projectKey];
+        _chunkQueueProvider = chunkQueueProvider;
+        _chunksDispatchQueue = dispatch_queue_create("com.memfault.chunks",
+                                                     dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
+                                                                                             QOS_CLASS_BACKGROUND, 0));
+        _chunkSenderRegistry = [MFLTChunkSenderRegistry createRegistry:self];
     }
     return self;
 }
@@ -53,20 +97,14 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
 + (instancetype)apiWithConfiguration:(NSDictionary *)configuration
 {
     NSString *projectKey = configuration[kMFLTProjectKey];
-    if (!projectKey) {
-        MFLTLogError(@"Project key missing! Use the kMFLTProjectKey in the configuration to set the project key.");
-        return nil;
-    }
+    NSAssert(projectKey, @"Project key missing! Use the kMFLTProjectKey in the configuration to set the project key.");
 
     NSString *apiBaseURLString = configuration[kMFLTApiBaseURL];
     if (apiBaseURLString == nil) {
         apiBaseURLString = MFLTDefaultApiBaseURL;
     }
     NSURL *apiBaseURL = [NSURL URLWithString:apiBaseURLString];
-    if (nil == apiBaseURL) {
-        MFLTLogError(@"API base URL missing! Use the MFLTDefaultApiBaseURL in the configuration to set the API base URL.");
-        return nil;
-    }
+    NSAssert(apiBaseURL, @"API base URL missing! Use the MFLTDefaultApiBaseURL in the configuration to set the API base URL.");
     MFLTLogDebug(@"Using %@ as API root", apiBaseURLString);
 
     NSString *ingressBaseURLString = configuration[kMFLTApiIngressBaseURL];
@@ -74,10 +112,7 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
         ingressBaseURLString = MFLTDefaultApiIngressBaseURL;
     }
     NSURL *ingressBaseURL = [NSURL URLWithString:ingressBaseURLString];
-    if (nil == ingressBaseURL) {
-        MFLTLogError(@"Ingress API base URL missing! Use the kMFLTApiIngressBaseURL in the configuration to set the Ingress API base URL.");
-        return nil;
-    }
+    NSAssert(ingressBaseURL, @"Ingress API base URL missing! Use the kMFLTApiIngressBaseURL in the configuration to set the Ingress API base URL.");
     MFLTLogDebug(@"Using %@ as Ingress API root", ingressBaseURLString);
 
     NSString *chunksBaseURLString = configuration[kMFLTApiChunksBaseURL];
@@ -85,11 +120,17 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
         chunksBaseURLString = MFLTDefaultApiChunksBaseURL;
     }
     NSURL *chunksBaseURL = [NSURL URLWithString:chunksBaseURLString];
-    if (nil == chunksBaseURL) {
-        MFLTLogError(@"Chunks API base URL missing! Use the kMFLTApiChunksBaseURL in the configuration to set the Chunks API base URL.");
-        return nil;
-    }
+    NSAssert(chunksBaseURL, @"Chunks API base URL missing! Use the kMFLTApiChunksBaseURL in the configuration to set the Chunks API base URL.");
     MFLTLogDebug(@"Using %@ as Chunks API root", chunksBaseURLString);
+
+    NSObject<MemfaultChunkQueueProvider> *chunkQueueProvider = configuration[kMFLTChunkQueueProvider];
+    if (chunkQueueProvider) {
+        NSAssert([chunkQueueProvider conformsToProtocol:NSProtocolFromString(@"MemfaultChunkQueueProvider")],
+                 @"The object with key kMFLTChunkQueueProvider must conform to the MemfaultChunkQueueProvider protocol.");
+    } else {
+        chunkQueueProvider = [[MFLTTemporaryChunkQueueProvider alloc] init];
+    }
+    MFLTLogDebug(@"Using chunk queue provider: %@", chunkQueueProvider);
 
     NSURLSession *session = configuration[kMFLTApiUrlSession];
     if (session == nil) {
@@ -100,7 +141,8 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
                                         projectKey:projectKey
                                         apiBaseURL:apiBaseURL
                                     ingressBaseURL:ingressBaseURL
-                                     chunksBaseURL:chunksBaseURL];
+                                     chunksBaseURL:chunksBaseURL
+                                chunkQueueProvider:chunkQueueProvider];
 }
 
 - (void)_doRequest:(NSURLRequest *)request completionHandler:(void(^)(NSData *data, NSURLResponse *response, NSError *error))block
@@ -317,11 +359,6 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
         completion:(void(^)(NSError *_Nullable error))completion
           boundary:(NSString *_Nullable)boundary
 {
-    if (self->_chunksRequestPending) {
-        completion([NSError mfltErrorWithCode:MemfaultErrorCode_InvalidState message:@"Not allowed to call -postChunks: while another call is still pending!"]);
-        return;
-    }
-    self->_chunksRequestPending = YES;
     NSAssert(chunks, @"chunks must not be nil");
     NSAssert(chunks.count > 0, @"chunks array cannot be empty");
     for (NSData *chunk in chunks) {
@@ -346,7 +383,6 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
             return;
         }
         completion(error);
-        strongSelf->_chunksRequestPending = NO;
     };
 
     __auto_type bgQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
@@ -363,18 +399,19 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
             }
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
             if (httpResponse.statusCode == 503) {
-                // Server is temporarily unavailable, try again after X seconds...
                 NSTimeInterval retryDelaySeconds = kMFLTChunksMinimumRetryDelaySecs;
                 NSString *retryAfterString = [httpResponse mfltValueForHTTPHeaderField:@"retry-after"];
                 if (retryAfterString) {
                     [[NSScanner scannerWithString:retryAfterString] scanDouble:&retryDelaySeconds];
                     retryDelaySeconds = MIN(kMFLTChunksMinimumRetryDelaySecs, retryDelaySeconds);
                 }
+                MFLTLogWarning(@"Chunk service unavailable, will retry again after %d seconds", (int)retryDelaySeconds);
                 schedulePost(retryDelaySeconds);
                 return;
             }
             if (httpResponse.statusCode >= 300) {
                 NSString *errorMsg = [strongSelf _findErrorReponseMessage:data statusCode:httpResponse.statusCode];
+                MFLTLogError(@"Chunk upload request failed: %@", errorMsg);
 
                 callCompletionBlock([NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"%@", errorMsg]);
                 return;
@@ -403,6 +440,30 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
         completion:(void(^)(NSError *_Nullable error))completion
 {
     [self postChunks:chunks deviceSerial:deviceSerial completion:completion boundary:nil];
+}
+
+- (id<MemfaultChunkSender>)chunkSenderWithDeviceSerial:(NSString *_Nonnull)deviceSerial
+{
+    return [_chunkSenderRegistry senderWithDeviceSerial:deviceSerial];
+}
+
+@end
+
+
+@implementation MemfaultApi (ChunkSenderFactory)
+
+- (id<MemfaultChunkSender>)createSenderWithDeviceSerial:(NSString *)deviceSerial
+{
+    id<MemfaultChunkQueue> chunkQueue = [_chunkQueueProvider queueWithDeviceSerial:deviceSerial];
+    NSAssert(chunkQueue, @"-queueWithDeviceSerial: must not return nil!");
+    MFLTBackoff *backoff = [[MFLTBackoff alloc] initWithBackoffFactor:kMFLTChunksBackoffFactor
+                                                      initialDuration:kMFLTChunksMinimumBackoffSecs
+                                                      maximumDuration:kMFLTChunksMaximumBackoffSecs];
+    return [[MFLTChunkSender alloc] initWithDeviceSerial:deviceSerial
+                                              chunkQueue:chunkQueue
+                                           dispatchQueue:_chunksDispatchQueue
+                                                     api:self
+                                                   backoff:backoff];
 }
 
 @end

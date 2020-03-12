@@ -1,6 +1,6 @@
 //! @file
 //!
-//! Copyright (c) 2020-Present Memfault, Inc.
+//! Copyright (c) Memfault, Inc.
 //! See LICENSE for details
 
 @import Specta;
@@ -36,7 +36,7 @@ describe(@"MemfaultApi -postChunks", ^{
         mockResponses = [NSMutableArray array];
         [mockResponses addObject:mock([NSHTTPURLResponse class])];
         api = [[MemfaultApi alloc] initApiWithSession:mockSession projectKey:projectKey apiBaseURL:apiDummyURL
-                                       ingressBaseURL:apiDummyURL chunksBaseURL:apiChunksBaseURL];
+                                       ingressBaseURL:apiDummyURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil];
         boundary = nil;
         request = nil;
         requestError = nil;
@@ -81,23 +81,6 @@ describe(@"MemfaultApi -postChunks", ^{
             NSData *expectedBody = [@"--my_boundary\r\nContent-Length: 6Content-Type: application/octet-stream\r\n\r\nchunk1\r\n--my_boundary\r\nContent-Length: 6Content-Type: application/octet-stream\r\n\r\nchunk2\r\n--my_boundary--\r\n" dataUsingEncoding:NSUTF8StringEncoding];
             expect(request.HTTPBody).to.equal(expectedBody);
             expect(postChunksError).to.beNil();
-        });
-
-        it(@"errors out if called again while completion block of previous call has not yet been called", ^{
-            [given([mockResponses[0] statusCode]) willReturnUnsignedInt:202];
-            dispatch_semaphore_t firstCallSema = dispatch_semaphore_create(0);
-            [api postChunks:@[chunkData1] deviceSerial:@"TEST_SN" completion:^(NSError * _Nullable error) {
-                dispatch_semaphore_wait(firstCallSema, DISPATCH_TIME_FOREVER);
-            }];
-            waitUntil(^(DoneCallback done) {
-                [api postChunks:@[chunkData1] deviceSerial:@"TEST_SN" completion:^(NSError * _Nullable error) {
-                    expect(error.localizedDescription).to.equal(@"Not allowed to call -postChunks: while another call is still pending!");
-                    expect(error.code).to.equal(MemfaultErrorCode_InvalidState);
-
-                    dispatch_semaphore_signal(firstCallSema);
-                    done();
-                }];
-            });
         });
 
         it(@"errors out if the internal networking call failed", ^{

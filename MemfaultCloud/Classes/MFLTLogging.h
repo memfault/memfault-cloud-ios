@@ -1,10 +1,9 @@
 //! @file
 //!
-//! Copyright (c) 2020-Present Memfault, Inc.
+//! Copyright (c) Memfault, Inc.
 //! See LICENSE for details
 
 #import <Foundation/Foundation.h>
-#import <CoreBluetooth/CoreBluetooth.h>
 #import "MemfaultCloud.h"
 
 NS_ASSUME_NONNULL_BEGIN

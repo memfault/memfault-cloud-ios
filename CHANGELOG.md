@@ -15,3 +15,8 @@
   `-[MemfaultApi chunkSenderWithDeviceSerial:]` and `MemfaultChunkSender`.
 - Removed `-[MemfaultApi postChunks:deviceSerial:completion:]` in favor of the
   new APIs.
+
+## v2.0.1
+
+- Fixed race conditions in `MemfaultChunkSender` that could cause chunks to get
+  sent out multiple times or only after enqueuing another chunk.

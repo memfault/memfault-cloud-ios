@@ -39,19 +39,24 @@
     return self;
 }
 
-- (void)_postIfNeeded {
+- (void)_postAndRestartIfNeeded:(BOOL)shouldRestart {
+    NSArray<NSData *> *chunks = nil;
+
     @synchronized (self) {
+        if (!shouldRestart && _stopped) {
+            return;
+        }
+
         _stopped = NO;
         if (_isPosting) {
             return;
         }
-        _isPosting = YES;
-    }
 
-    NSArray<NSData *> *chunks = [_chunkQueue peek:kMFLTChunksMaxChunksPerRequest];
-    if (chunks.count == 0) {
-        _isPosting = NO;
-        return;
+        chunks = [_chunkQueue peek:kMFLTChunksMaxChunksPerRequest];
+        if (chunks.count == 0) {
+            return;
+        }
+        _isPosting = YES;
     }
 
     @weakify(self);
@@ -62,11 +67,11 @@
 }
 
 - (void)_handlePostCompletion:(NSError * _Nullable)error chunks:(NSArray<NSData *> *)chunks {
-    @synchronized (self) {
-        self->_isPosting = NO;
-    }
-
     if (error) {
+        @synchronized (self) {
+            self->_isPosting = NO;
+        }
+
         // TODO: report error to error delegate
         const dispatch_time_t backoffTime =
         dispatch_time(DISPATCH_TIME_NOW, [self->_backoff bump] * NSEC_PER_SEC);
@@ -74,18 +79,18 @@
         @weakify(self);
         dispatch_after(backoffTime, _dispatchQueue, ^{
             @strongify(self);
-            if (self && !self->_stopped) {
-                [self _postIfNeeded];
-            }
+            [self _postAndRestartIfNeeded:NO];
         });
         return;
     }
 
     [_backoff reset];
-    [_chunkQueue drop:chunks.count];
-    if (_chunkQueue.count > 0 && ! self->_stopped) {
-        [self _postIfNeeded];
+
+    @synchronized (self) {
+        self->_isPosting = NO;
+        [_chunkQueue drop:chunks.count];
     }
+    [self _postAndRestartIfNeeded:NO];
 }
 
 - (void)postChunks:(NSArray<NSData *>*)chunks {
@@ -94,15 +99,17 @@
         return;
     }
     // TODO: wait a bit to allow more chunks to get added before kicking off a send
-    [self _postIfNeeded];
+    [self _postAndRestartIfNeeded:YES];
 }
 
 - (void)postChunks {
-    [self _postIfNeeded];
+    [self _postAndRestartIfNeeded:YES];
 }
 
 - (void)stop {
-    _stopped = YES;
+    @synchronized (self) {
+        _stopped = YES;
+    }
 }
 
 @end

@@ -127,6 +127,50 @@ let chunks = [...]
 MemfaultApi.shared.chunkSender(withDeviceSerial: "DEMO_SERIAL").postChunks(chunks)
 ```
 
+### Custom Queue Implementations
+
+The default queue implementation is RAM backed. Therefore, if the host app is
+killed or the iOS device is shutdown or rebooted, the contents of the queue are
+lost. This can be a reason to override the default queue implementation.
+
+The library provides a "hook" to override the default queue implementation, by
+setting the `kMFLTChunkQueueProvider` configuration option to an object that
+conforms to `MemfaultChunkQueueProvider`:
+
+```swift
+class MyQueueProvider: MemfaultChunkQueueProvider {
+    func queue(withDeviceSerial deviceSerial: String) -> MemfaultChunkQueue {
+        // Get or create a queue for the given deviceSerial.
+        // The queue object needs to implement
+        // the MemfaultChunkQueue protocol.
+        let queue = ...
+        return queue
+    }
+}
+
+func bootMemfault() {
+    let queueProvider = MyQueueProvider()
+
+    MemfaultApi.configureSharedApi([
+        kMFLTProjectKey: "<YOUR_PROJECT_KEY_HERE>",
+
+        // Pass the custom queue provider in the configuration:
+        kMFLTChunkQueueProvider: queueProvider,
+    ])
+
+    // If your queue implementation persists the contents of the
+    // queues between app restarts, you will need to call postChunks()
+    // after restarting the app. This re-registers the queues that were loaded
+    // from persistent storage and resumes the upload process again:
+
+    let deviceSerialsToResume = [ ... ]
+
+    for sn in deviceSerialsToResume {
+        MemfaultApi.shared.chunkSender(withDeviceSerial: sn).postChunks()
+    }
+}
+```
+
 ## API Documentation
 
 `MemfaultCloud.h` contains detailed documentation for each API.

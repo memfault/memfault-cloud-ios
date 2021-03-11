@@ -30,7 +30,7 @@ describe(@"MFLTChunkSender", ^{
     __block MFLTBackoff *mockBackoff = nil;
     __block NSMutableArray<NSArray<NSData *> *> *postedChunks = nil;
     __block NSArray<NSData *> *postedDeviceSerial = nil;
-    __block NSError *postError = nil;
+    __block NSMutableArray<NSError *> *postErrors  = nil;
     __block void (^beforePostComplete)(void) = nil;
 
     beforeEach(^{
@@ -41,7 +41,7 @@ describe(@"MFLTChunkSender", ^{
         beforePostComplete = nil;
         postedChunks = [NSMutableArray array];
         postedDeviceSerial = nil;
-        postError = nil;
+        postErrors = [NSMutableArray array];
         mockApi = mock([MemfaultApi class]);
 
         [givenVoid([mockApi postChunks:(id)anything() deviceSerial:(id)anything() completion:(id)anything()]) willDo:^id _Nonnull(NSInvocation * _Nonnull invocation) {
@@ -55,8 +55,11 @@ describe(@"MFLTChunkSender", ^{
                 beforePostComplete();
             }
             dispatch_async(networkingQueue, ^{
-                block(postError);
-                postError = nil;
+                NSError *error = [postErrors firstObject];
+                if (error) {
+                    [postErrors removeObjectAtIndex:0];
+                }
+                block(error);
             });
             return nil;
         }];
@@ -76,7 +79,7 @@ describe(@"MFLTChunkSender", ^{
 
     describe(@"-postChunks:", ^{
         it(@"retries upon failure after a backoff period and resets backoff after successful post", ^{
-            postError = testError;
+            [postErrors addObject:testError];
             [sender postChunks:@[testChunk1]];
 
             waitUntilQueueDrained();
@@ -86,6 +89,20 @@ describe(@"MFLTChunkSender", ^{
             [verifyCount(mockApi, times(2)) postChunks:@[testChunk1]
                                           deviceSerial:testSerial1
                                             completion:(id)anything()];
+        });
+
+        it(@"drops chunks after receiving 100 consecutive errors", ^{
+            for (int i = 0; i < 100; i++) {
+                [postErrors addObject:testError];
+            }
+            [sender postChunks:@[testChunk1]];
+
+            waitUntilQueueDrained();
+
+            [verifyCount(mockApi, times(100)) postChunks:@[testChunk1]
+                                            deviceSerial:testSerial1
+                                              completion:(id)anything()];
+            expect(queue.count).to.equal(0);
         });
 
         it(@"batches chunks", ^{

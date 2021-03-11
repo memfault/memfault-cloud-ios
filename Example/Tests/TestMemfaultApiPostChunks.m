@@ -37,6 +37,8 @@ describe(@"MemfaultApi -postChunks", ^{
         [mockResponses addObject:mock([NSHTTPURLResponse class])];
         api = [[MemfaultApi alloc] initApiWithSession:mockSession projectKey:projectKey apiBaseURL:apiDummyURL
                                        ingressBaseURL:apiDummyURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil];
+        api.minimumRetryDelaySecs = 0;
+        api.minimumDelayBetweenCallsSecs = 0;
         boundary = nil;
         request = nil;
         requestError = nil;
@@ -112,6 +114,18 @@ describe(@"MemfaultApi -postChunks", ^{
 
         it(@"retries in case of HTTP status 503", ^{
             [given([mockResponses[0] statusCode]) willReturnUnsignedInt:503];
+            [given([mockResponses[0] allHeaderFields]) willReturn:@{
+                @"Retry-After": @"1"
+            }];
+
+            [mockResponses addObject:mock([NSHTTPURLResponse class])];
+
+            postChunks(@[chunkData1]);
+            expect(postChunksError).to.beNil();
+        });
+
+        it(@"retries in case of HTTP status 429", ^{
+            [given([mockResponses[0] statusCode]) willReturnUnsignedInt:429];
             [given([mockResponses[0] allHeaderFields]) willReturn:@{
                 @"Retry-After": @"1"
             }];

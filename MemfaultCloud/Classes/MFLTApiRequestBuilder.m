@@ -45,7 +45,7 @@
     components.path = [[NSString alloc] initWithFormat:pathFormat arguments:args];
 
     NSURL *url = [components URLRelativeToURL:_apiBaseURL];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.0];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
     [request setHTTPMethod:httpMethod];
 
     NSString *contentType = @"application/json";

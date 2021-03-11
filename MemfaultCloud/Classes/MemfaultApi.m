@@ -27,7 +27,7 @@ NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
 
 NSString *const kMFLTChunkQueueProvider = @"chunkQueueProvider";
 
-#define kMFLTChunksMinimumRetryDelaySecs (5.0)
+#define kMFLTChunksMinimumRetryDelaySecs (5.0 * 60.0)
 #define kMFLTChunksMinimumDelayBetweenCallsSecs (0.5)
 #define kMFLTChunksBackoffFactor (2)
 #define kMFLTChunksMinimumBackoffSecs (1.0)
@@ -49,7 +49,13 @@ static MemfaultApi *gMemfaultSharedApi;
     id<MemfaultChunkQueueProvider> _chunkQueueProvider;
     dispatch_time_t _chunksLastTime;
     dispatch_queue_t _chunksDispatchQueue;
+
+    // For testing
+    NSTimeInterval _minimumRetryDelaySecs;
+    NSTimeInterval _minimumDelayBetweenCallsSecs;
 }
+@synthesize minimumRetryDelaySecs = _minimumRetryDelaySecs;
+@synthesize minimumDelayBetweenCallsSecs = _minimumDelayBetweenCallsSecs;
 
 + (BOOL)_setSharedApi:(MemfaultApi *)api {
     static dispatch_once_t onceToken;
@@ -90,6 +96,8 @@ static MemfaultApi *gMemfaultSharedApi;
                                                      dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
                                                                                              QOS_CLASS_BACKGROUND, 0));
         _chunkSenderRegistry = [MFLTChunkSenderRegistry createRegistry:self];
+        _minimumRetryDelaySecs = kMFLTChunksMinimumRetryDelaySecs;
+        _minimumDelayBetweenCallsSecs = kMFLTChunksMinimumDelayBetweenCallsSecs;
     }
     return self;
 }
@@ -398,12 +406,12 @@ static MemfaultApi *gMemfaultSharedApi;
                 return;
             }
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-            if (httpResponse.statusCode == 503) {
-                NSTimeInterval retryDelaySeconds = kMFLTChunksMinimumRetryDelaySecs;
+            if (httpResponse.statusCode == 503 || httpResponse.statusCode == 429) {
+                NSTimeInterval retryDelaySeconds = self->_minimumRetryDelaySecs;
                 NSString *retryAfterString = [httpResponse mfltValueForHTTPHeaderField:@"retry-after"];
                 if (retryAfterString) {
                     [[NSScanner scannerWithString:retryAfterString] scanDouble:&retryDelaySeconds];
-                    retryDelaySeconds = MIN(kMFLTChunksMinimumRetryDelaySecs, retryDelaySeconds);
+                    retryDelaySeconds = MAX(self->_minimumRetryDelaySecs, retryDelaySeconds);
                 }
                 MFLTLogWarning(@"Chunk service unavailable, will retry again after %d seconds", (int)retryDelaySeconds);
                 schedulePost(retryDelaySeconds);
@@ -426,7 +434,7 @@ static MemfaultApi *gMemfaultSharedApi;
             return;
         }
         // Keep track of last time the /chunks endpoint was called and space out the calls, to avoid hammering the API:
-        dispatch_time_t earliestTime = dispatch_time(strongSelf->_chunksLastTime, kMFLTChunksMinimumDelayBetweenCallsSecs * NSEC_PER_SEC);
+        dispatch_time_t earliestTime = dispatch_time(strongSelf->_chunksLastTime, self->_minimumDelayBetweenCallsSecs * NSEC_PER_SEC);
         dispatch_time_t requestedTime = dispatch_time(DISPATCH_TIME_NOW, delaySecs * NSEC_PER_SEC);
         strongSelf->_chunksLastTime = MAX(earliestTime, requestedTime);
         dispatch_after(strongSelf->_chunksLastTime, bgQueue, postBlock);

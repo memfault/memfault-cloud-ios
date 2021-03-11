@@ -9,7 +9,8 @@
 #import "MFLTBackoff.h"
 #import "MFLTScope.h"
 
-#define kMFLTChunksMaxChunksPerRequest (1000)
+#define kMFLTChunksMaxChunksPerRequest (100)
+#define kMFLTMaxConsecutiveErrors (100)
 
 @implementation MFLTChunkSender {
     NSString *_deviceSerial;
@@ -19,6 +20,7 @@
     BOOL _isPosting;
     BOOL _stopped;
     MFLTBackoff *_backoff;
+    NSInteger _consecutiveErrorCount;
 }
 @synthesize deviceSerial = _deviceSerial;
 @synthesize isPosting = _isPosting;
@@ -70,6 +72,12 @@
     if (error) {
         @synchronized (self) {
             self->_isPosting = NO;
+            if (++self->_consecutiveErrorCount >= kMFLTMaxConsecutiveErrors) {
+                // When reaching MAX_CONSECUTIVE_ERRORS, start dropping chunks from the queue, even
+                // if they have not been sent, as a last resort measure, to avoid accumulating too
+                // many chunks on the device:
+                [_chunkQueue drop:chunks.count];
+            }
         }
 
         // TODO: report error to error delegate
@@ -88,6 +96,7 @@
 
     @synchronized (self) {
         self->_isPosting = NO;
+        self->_consecutiveErrorCount = 0;
         [_chunkQueue drop:chunks.count];
     }
     [self _postAndRestartIfNeeded:NO];

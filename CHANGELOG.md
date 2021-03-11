@@ -20,3 +20,13 @@
 
 - Fixed race conditions in `MemfaultChunkSender` that could cause chunks to get
   sent out multiple times or only after enqueuing another chunk.
+
+## v2.1.0
+
+- Increase chunk upload timeout from 10 seconds to 60 seconds.
+- Reduce the maximum number of batched chunks from 1000 to 100.
+- Retry uploading chunks when receiving HTTP 429 Too Many Request.
+- Increased the mimimum retry delay for HTTP 429 or 503 errors from 5 seconds to
+  5 minutes.
+- Drop chunks after 100 consecutive upload errors, to prevent accumulating
+  chunks indefinitely on the device.

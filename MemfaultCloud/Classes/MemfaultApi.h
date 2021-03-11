@@ -44,4 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MemfaultApi ()
+// For testing:
+@property NSTimeInterval minimumRetryDelaySecs;
+@property NSTimeInterval minimumDelayBetweenCallsSecs;
+@end
+
 NS_ASSUME_NONNULL_END

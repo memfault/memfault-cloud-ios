@@ -29,6 +29,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 ### Adding MemfaultCloud to your project
 
+#### Swift Package Manager
+
+Add this line to your dependencies list in your Package.swift:
+
+```
+.package(name: "MemfaultCloud", url: "https://github.com/memfault/memfault-ios-cloud.git", from: "2.2.0"),
+```
+
 #### CocoaPods
 
 In case you are using CocoaPods, you can add `MemfaultCloud` as a dependency to

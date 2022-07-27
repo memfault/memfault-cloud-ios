@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, MemfaultLogLevel);
 
-//! Configuration dictionary key to specify your Memfault API key.
+//! Configuration dictionary key to specify your Memfault Project Key.
 extern NSString *const kMFLTProjectKey;
 
 //! Configuration dictionary key to specify Memfault API url to use

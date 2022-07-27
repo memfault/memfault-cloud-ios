@@ -6,8 +6,8 @@ The Xcode workspace `Example/MemfaultCloud.xcworkspace` contains a `DemoApp`
 target. This is a very basic iOS app that demonstrates the functionality of this
 library.
 
-Before building the app, make sure to update the Project API Key in
-`AppDelegate.swift`. To find your Project API Key, log in to
+Before building the app, make sure to update the Project Key in
+`AppDelegate.swift`. To find your Project Key, log in to
 https://app.memfault.com/ and navigate to Settings.
 
 ```swift
@@ -72,8 +72,8 @@ Before using `MemfaultApi.sharedApi`, you will need to configure it once and
 only once by passing a configuration dictionary to
 `MemfaultApi.configureSharedApi([...])`
 
-The Project API Key is the only mandatory piece of configuration. To find your
-Project API Key, log in to https://app.memfault.com/ and navigate to Settings.
+The Project Key is the only mandatory piece of configuration. To find your
+Project Key, log in to https://app.memfault.com/ and navigate to Settings.
 
 ```swift
 MemfaultApi.configureSharedApi([
@@ -118,7 +118,7 @@ contains the URL to the OTA payload.
 
 The Memfault Firmware SDK packetizes data that needs to be sent back to
 Memfault's cloud into "chunks". See
-[this tutorial for more information on the device/firmware details](https://docs.memfault.com/docs/embedded/data-from-firmware-to-the-cloud).
+[this tutorial for more information on the device/firmware details](https://docs.memfault.com/docs/mcu/data-from-firmware-to-the-cloud).
 
 This iOS library contains a high-level API to submit the chunks to Memfault.
 

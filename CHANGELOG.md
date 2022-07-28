@@ -30,3 +30,7 @@
   5 minutes.
 - Drop chunks after 100 consecutive upload errors, to prevent accumulating
   chunks indefinitely on the device.
+
+## v2.2.0
+
+- Add support for installing the library using Swift Package Manager.

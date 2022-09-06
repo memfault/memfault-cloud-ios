@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 Add this line to your dependencies list in your Package.swift:
 
 ```
-.package(name: "MemfaultCloud", url: "https://github.com/memfault/memfault-ios-cloud.git", from: "2.2.0"),
+.package(name: "MemfaultCloud", url: "https://github.com/memfault/memfault-ios-cloud.git", from: "2.2.1"),
 ```
 
 #### CocoaPods

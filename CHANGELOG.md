@@ -34,3 +34,7 @@
 ## v2.2.0
 
 - Add support for installing the library using Swift Package Manager.
+
+## v2.2.1
+
+- Fix formatting in Package.swift file

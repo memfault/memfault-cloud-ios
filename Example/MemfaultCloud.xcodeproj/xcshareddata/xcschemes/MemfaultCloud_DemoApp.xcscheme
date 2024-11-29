@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EC95323D54E2CB5A2063E4CA360C39B5"
+               BlueprintIdentifier = "18ABFA95667D3B08C20C7C79BA89F711"
                BuildableName = "MemfaultCloud.framework"
                BlueprintName = "MemfaultCloud"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">

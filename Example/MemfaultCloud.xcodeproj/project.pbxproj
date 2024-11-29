@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
+		07F47000C04F2CC7F6521461 /* Pods_MemfaultCloud_DemoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E84CC21535B54B447F8C877E /* Pods_MemfaultCloud_DemoApp.framework */; };
+		308933F82E9C2C653A7067B9 /* Pods_MemfaultCloud_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D45E421CB7F6C8E55A7FF688 /* Pods_MemfaultCloud_Tests.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
-		6290DAC22E90A81F2DF03446 /* Pods_MemfaultCloud_DemoApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03118EF0B9B3BC01E836DA89 /* Pods_MemfaultCloud_DemoApp.framework */; };
 		7013651723CCEE1E002C9584 /* TestMemfaultApiPostChunks.m in Sources */ = {isa = PBXBuildFile; fileRef = 7013651623CCEE1D002C9584 /* TestMemfaultApiPostChunks.m */; };
 		707B260B24196B9700000CAB /* TestChunkSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 707B260A24196B9700000CAB /* TestChunkSender.m */; };
 		7086CB0023C8D8F10019D47E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7086CAFF23C8D8F10019D47E /* AppDelegate.swift */; };
@@ -20,9 +20,10 @@
 		7086CB0C23C8D8F40019D47E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7086CB0A23C8D8F40019D47E /* LaunchScreen.storyboard */; };
 		7086CB1423C8DACF0019D47E /* MainMenuTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7086CB1323C8DACF0019D47E /* MainMenuTableViewController.swift */; };
 		7086CB1723CC80100019D47E /* TestMemfaultApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 7086CB1523CC80100019D47E /* TestMemfaultApi.m */; };
+		70C55BBD2CF8FB910083D7C5 /* MemfaultCloud.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 700443AC2CF8FAF600E10231 /* MemfaultCloud.framework */; };
+		70C55BBE2CF8FB910083D7C5 /* MemfaultCloud.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 700443AC2CF8FAF600E10231 /* MemfaultCloud.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		70EC1F022417D18700224004 /* TestTemporaryChunkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EC1F012417D18700224004 /* TestTemporaryChunkQueue.m */; };
 		70EC1F042417E51B00224004 /* TestChunkSenderRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EC1F032417E51B00224004 /* TestChunkSenderRegistry.m */; };
-		D015AABEA720F7B10EAA6AAE /* Pods_MemfaultCloud_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CDA900D133CA489F9104286 /* Pods_MemfaultCloud_Tests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,21 +36,35 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		700443AB2CF8FA6000E10231 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				70C55BBE2CF8FB910083D7C5 /* MemfaultCloud.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		03118EF0B9B3BC01E836DA89 /* Pods_MemfaultCloud_DemoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloud_DemoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		387559F387DF403786397F74 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		3EFDEA096A593AB4709221D5 /* Pods-MemfaultCloud_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_Tests.release.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		55F0033D84760CC726EF33C9 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		58FD4348F59AF6B6B1FF46D9 /* Pods-MemfaultCloud_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6003F591195388D20070C39A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6003F5AE195388D20070C39A /* MemfaultCloud_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MemfaultCloud_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6003F5B7195388D20070C39A /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		64422A639E9762783A1E9226 /* Pods-MemfaultCloud_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_Tests.debug.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		68911372CC3E6985A20D1B6F /* Pods-MemfaultCloud_DemoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_DemoApp.release.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp.release.xcconfig"; sourceTree = "<group>"; };
+		700443AC2CF8FAF600E10231 /* MemfaultCloud.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MemfaultCloud.framework; path = "../Debug-iphonesimulator/MemfaultCloud/MemfaultCloud.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7013651623CCEE1D002C9584 /* TestMemfaultApiPostChunks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMemfaultApiPostChunks.m; sourceTree = "<group>"; };
 		707B260A24196B9700000CAB /* TestChunkSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestChunkSender.m; sourceTree = "<group>"; };
 		7086CAFD23C8D8F10019D47E /* MemfaultCloud_DemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MemfaultCloud_DemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,11 +77,13 @@
 		7086CB1523CC80100019D47E /* TestMemfaultApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestMemfaultApi.m; sourceTree = "<group>"; };
 		70EC1F012417D18700224004 /* TestTemporaryChunkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTemporaryChunkQueue.m; sourceTree = "<group>"; usesTabs = 0; };
 		70EC1F032417E51B00224004 /* TestChunkSenderRegistry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestChunkSenderRegistry.m; sourceTree = "<group>"; };
-		7C582FDEAC26129EB7FC7564 /* Pods_MemfaultCloudExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloudExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F9B44766A5A44C41E8FAD0F /* Pods-MemfaultCloud_DemoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_DemoApp.debug.xcconfig"; path = "Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp.debug.xcconfig"; sourceTree = "<group>"; };
-		9CDA900D133CA489F9104286 /* Pods_MemfaultCloud_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloud_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		890A80777166619B80A7B54C /* Pods-MemfaultCloud_DemoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_DemoApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp.release.xcconfig"; sourceTree = "<group>"; };
+		C13EA825C3C0DFB7FFEC305D /* Pods-MemfaultCloud_DemoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_DemoApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp.debug.xcconfig"; sourceTree = "<group>"; };
 		CF22763CFDB4193FE75CF153 /* MemfaultCloud.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = MemfaultCloud.podspec; path = ../MemfaultCloud.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		F7844F3D97FDC9CD84E6C428 /* Pods_MemfaultCloud_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloud_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0DAAF146260788399C57647 /* Pods-MemfaultCloud_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemfaultCloud_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		D45E421CB7F6C8E55A7FF688 /* Pods_MemfaultCloud_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloud_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E84CC21535B54B447F8C877E /* Pods_MemfaultCloud_DemoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemfaultCloud_DemoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,10 +91,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
+				70C55BBD2CF8FB910083D7C5 /* MemfaultCloud.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				D015AABEA720F7B10EAA6AAE /* Pods_MemfaultCloud_Tests.framework in Frameworks */,
+				308933F82E9C2C653A7067B9 /* Pods_MemfaultCloud_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,7 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6290DAC22E90A81F2DF03446 /* Pods_MemfaultCloud_DemoApp.framework in Frameworks */,
+				07F47000C04F2CC7F6521461 /* Pods_MemfaultCloud_DemoApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,14 +133,12 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				700443AC2CF8FAF600E10231 /* MemfaultCloud.framework */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
-				6003F5AF195388D20070C39A /* XCTest.framework */,
-				F7844F3D97FDC9CD84E6C428 /* Pods_MemfaultCloud_Example.framework */,
-				9CDA900D133CA489F9104286 /* Pods_MemfaultCloud_Tests.framework */,
-				7C582FDEAC26129EB7FC7564 /* Pods_MemfaultCloudExample.framework */,
-				03118EF0B9B3BC01E836DA89 /* Pods_MemfaultCloud_DemoApp.framework */,
+				E84CC21535B54B447F8C877E /* Pods_MemfaultCloud_DemoApp.framework */,
+				D45E421CB7F6C8E55A7FF688 /* Pods_MemfaultCloud_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -181,6 +196,10 @@
 				3EFDEA096A593AB4709221D5 /* Pods-MemfaultCloud_Tests.release.xcconfig */,
 				7F9B44766A5A44C41E8FAD0F /* Pods-MemfaultCloud_DemoApp.debug.xcconfig */,
 				68911372CC3E6985A20D1B6F /* Pods-MemfaultCloud_DemoApp.release.xcconfig */,
+				C13EA825C3C0DFB7FFEC305D /* Pods-MemfaultCloud_DemoApp.debug.xcconfig */,
+				890A80777166619B80A7B54C /* Pods-MemfaultCloud_DemoApp.release.xcconfig */,
+				58FD4348F59AF6B6B1FF46D9 /* Pods-MemfaultCloud_Tests.debug.xcconfig */,
+				D0DAAF146260788399C57647 /* Pods-MemfaultCloud_Tests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -197,6 +216,7 @@
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
 				224ADE4B0276AE0A219DB494 /* [CP] Embed Pods Frameworks */,
+				700443AB2CF8FA6000E10231 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -294,15 +314,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-MemfaultCloud_Tests-checkManifestLockResult.txt",
 			);
@@ -317,7 +333,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Expecta/Expecta.framework",
 				"${BUILT_PRODUCTS_DIR}/OCHamcrest/OCHamcrest.framework",
 				"${BUILT_PRODUCTS_DIR}/OCMockito/OCMockito.framework",
@@ -332,7 +348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MemfaultCloud_Tests/Pods-MemfaultCloud_Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A7743F4B00E991551258A203 /* [CP] Check Pods Manifest.lock */ = {
@@ -340,15 +356,11 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-MemfaultCloud_DemoApp-checkManifestLockResult.txt",
 			);
@@ -363,7 +375,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/MemfaultCloud/MemfaultCloud.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -372,7 +384,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MemfaultCloud_DemoApp/Pods-MemfaultCloud_DemoApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -484,7 +496,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -531,7 +543,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -542,7 +554,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64422A639E9762783A1E9226 /* Pods-MemfaultCloud_Tests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -576,7 +587,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3EFDEA096A593AB4709221D5 /* Pods-MemfaultCloud_Tests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -618,7 +628,7 @@
 				DEVELOPMENT_TEAM = F27WYZT9H8;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = MemfaultCloud_DemoApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -648,7 +658,7 @@
 				DEVELOPMENT_TEAM = F27WYZT9H8;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = MemfaultCloud_DemoApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

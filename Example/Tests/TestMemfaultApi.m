@@ -176,9 +176,45 @@ describe(@"MemfaultApi", ^{
             });
         });
 
+        it(@"handles unexpected body of successful response", ^{
+            NSArray<NSData *> *unexpectedResponses = @[
+                // Empty response:
+                [NSData data],
+                // String:
+                [@"\"a string\"" dataUsingEncoding:NSUTF8StringEncoding],
+                // Empty object:
+                [NSJSONSerialization dataWithJSONObject:@{} options:0 error:nil],
+                // "artifacts" is not an array:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @{}, @"version": @"", @"notes": @""} options:0 error:nil],
+                // artifact is not an object:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@"not an object"], @"version": @"", @"notes": @""} options:0 error:nil],
+                // "url" does not exist:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@{}], @"version": @"", @"notes": @""} options:0 error:nil],
+                // "url" is not a string:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@{@"url": @123}], @"version": @"", @"notes": @""} options:0 error:nil],
+                // "version" does not exist:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@{@"url": @""}], @"notes": @""} options:0 error:nil],
+                // "version" is not a string:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@{@"url": @""}], @"version": @123, @"notes": @""} options:0 error:nil],
+                // "notes" does not exist:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@{@"url": @""}], @"version": @""} options:0 error:nil],
+                // "notes" is not a string:
+                [NSJSONSerialization dataWithJSONObject:@{@"artifacts": @[@{@"url": @""}], @"version": @"", @"notes": @123} options:0 error:nil],
+            ];
+
+            for (NSData *bodyData in unexpectedResponses) {
+                waitUntil(^(DoneCallback done) {
+                    [api getLatestReleaseForDeviceInfo:deviceInfo completion:getAssertCompletionBlock(done, nil, NO, MemfaultErrorCode_UnexpectedResponse)];
+                    assertDataRequest(expectedMethod, expectedURLString, nil);
+                    [given(mockResponse.statusCode) willReturnInt:200];
+                    mockDataTaskCompleted(bodyData, mockResponse, nil);
+                });
+            }
+        });
+
         it(@"propagates error when non-200 HTTP status is responded with", ^{
             waitUntil(^(DoneCallback done) {
-                // NOTE: at the moment a JSON body is ALWAYS expected, even for all error responses!
+                // NOTE: a JSON body is expected, even for all error responses!
                 id bodyObj = @{@"error": @{ @"message": @"test"}};
                 NSData *bodyData = [NSJSONSerialization dataWithJSONObject:bodyObj options:0 error:nil];
 
@@ -189,6 +225,30 @@ describe(@"MemfaultApi", ^{
             });
         });
 
+        it(@"handles error with unexpected response body", ^{
+            NSArray<NSData *> *unexpectedResponses = @[
+                // Empty response:
+                [NSData data],
+                // String:
+                [@"\"a string\"" dataUsingEncoding:NSUTF8StringEncoding],
+                // Empty object:
+                [NSJSONSerialization dataWithJSONObject:@{} options:0 error:nil],
+                // "error" is not an object:
+                [NSJSONSerialization dataWithJSONObject:@{@"error": @123} options:0 error:nil],
+                // "message" is not a string:
+                [NSJSONSerialization dataWithJSONObject:@{@"error": @{ @"message": @123 }} options:0 error:nil],
+            ];
+
+            for (NSData *bodyData in unexpectedResponses) {
+                waitUntil(^(DoneCallback done) {
+                    [api getLatestReleaseForDeviceInfo:deviceInfo completion:getAssertCompletionBlock(done, nil, NO, MemfaultErrorCode_UnexpectedResponse)];
+                    assertDataRequest(expectedMethod, expectedURLString, nil);
+                    [given(mockResponse.statusCode) willReturnInt:403];
+                    mockDataTaskCompleted(bodyData, mockResponse, nil);
+                });
+            }
+        });
+        
         it(@"works for legacy deviceInfo", ^{
             // No "software_type" query arg:
             NSString *expectedLegacyURLString = @"//BASE/api/v0/releases/latest?current_version=v2&device_serial=ID&hardware_version=v1";

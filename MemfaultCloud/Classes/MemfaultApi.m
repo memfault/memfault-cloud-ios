@@ -251,11 +251,11 @@ static MemfaultApi *gMemfaultSharedApi;
     NSError *error = nil;
     if (responseData) {
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingAllowFragments error:&error];
-        if (!error) {
+        if ([dict isKindOfClass:[NSDictionary class]] && !error) {
             NSDictionary<NSString *, NSString *> *errorDict = dict[@"error"];
-            if (errorDict) {
+            if (errorDict && [errorDict isKindOfClass:[NSDictionary class]]) {
                 NSString *errorMsg = errorDict[@"message"];
-                if (errorMsg) {
+                if (errorMsg && [errorMsg isKindOfClass:[NSString class]]) {
                     return errorMsg;
                 }
             }
@@ -300,6 +300,17 @@ static MemfaultApi *gMemfaultSharedApi;
             return;
         }
 
+        if (httpResponse.statusCode != 200) {
+            NSString *errorMsg = [self _findErrorReponseMessage:data statusCode:httpResponse.statusCode];
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"%@", errorMsg]);
+            return;
+        }
+    
+        if ([data length] == 0) {
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Response was empty."]);
+            return;
+        }
+
         // TODO: clean this up and put in a response parsing class
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
         if (error) {
@@ -307,15 +318,14 @@ static MemfaultApi *gMemfaultSharedApi;
             return;
         }
 
-        if (httpResponse.statusCode != 200) {
-            NSString *errorMsg = [self _findErrorReponseMessage:data statusCode:httpResponse.statusCode];
-            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"%@", errorMsg]);
+        if (NO == [dict isKindOfClass:[NSDictionary class]]) {
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Expected response body to be an object."]);
             return;
         }
 
         NSArray<NSDictionary<NSString *, NSString *> *> *artifacts = dict[@"artifacts"];
         if (artifacts == nil || NO == [artifacts isKindOfClass:[NSArray class]]) {
-            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Unexpected response!"]);
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Expected artifacts to be an array."]);
             return;
         }
         if (artifacts.count == 0) {
@@ -323,19 +333,24 @@ static MemfaultApi *gMemfaultSharedApi;
             return;
         }
         NSDictionary<NSString *, NSString *> *latest = artifacts[0];
+        if (NO == [latest isKindOfClass:[NSDictionary class]]) {
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Expected artifact to be an object."]);
+            return;
+        }
+
         NSString *urlString = latest[@"url"];
         if (urlString == nil || NO == [urlString isKindOfClass:[NSString class]]) {
-            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Unexpected response!"]);
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Expected url to be a string."]);
             return;
         }
         NSString *version = dict[@"version"];
         if (version == nil || NO == [version isKindOfClass:[NSString class]]) {
-            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Unexpected response!"]);
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Expected version to be a string."]);
             return;
         }
         NSString *notes = dict[@"notes"];
         if (notes == nil || NO == [notes isKindOfClass:[NSString class]]) {
-            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Unexpected response!"]);
+            block(nil, NO, [NSError mfltErrorWithCode:MemfaultErrorCode_UnexpectedResponse message:@"Expected notes to be a string."]);
             return;
         }
         MemfaultOtaPackage *latestRelease = [[MemfaultOtaPackage alloc] init];

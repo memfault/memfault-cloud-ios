@@ -1,6 +1,6 @@
 use_frameworks!
 
-platform :ios, '10.0'
+platform :ios, '13.0'
 
 target 'MemfaultCloud_DemoApp' do
   pod 'MemfaultCloud', :path => '../'
@@ -9,10 +9,20 @@ target 'MemfaultCloud_DemoApp' do
     inherit! :search_paths
 
     # Pin to specific versions, to make it possible to cache the Pods directory correctly in CI:
-    pod 'Specta', '= 1.0.7'
-    pod 'OCMockito', '= 5.1.1'
-    pod 'OCHamcrest', '= 7.1.1'
+    pod 'Specta', '= 2.0.0'
+    pod 'OCMockito', '= 7.0.2'
+    pod 'OCHamcrest', '= 9.0.3'
     pod 'Expecta', '= 1.0.6'
 
   end
+end
+
+# NOTE: Specta / Expecta have a deployment target that is no longer supported -- patch it up!
+# https://github.com/specta/specta/issues/233
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        end
+    end
 end

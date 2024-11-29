@@ -38,3 +38,12 @@
 ## v2.2.1
 
 - Fix formatting in Package.swift file
+
+## v3.0.0
+
+- Breaking: Raised the minimum deployment target to iOS 13.0.
+- Upgraded test dependencies (OCHamcrest, OCMockito and Specta) to the latest
+  versions.
+- Fix: better handle unexpected responses from Memfault. Fixes
+  [#3](https://github.com/memfault/memfault-cloud-ios/issues/3). Thanks to
+  @bgomberg for reporting the issue!

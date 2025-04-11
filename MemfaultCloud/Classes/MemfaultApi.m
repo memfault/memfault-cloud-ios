@@ -26,12 +26,14 @@ NSString *const MFLTDefaultApiIngressBaseURL = @"https://ingress.memfault.com";
 NSString *const MFLTDefaultApiChunksBaseURL = @"https://chunks.memfault.com";
 
 NSString *const kMFLTChunkQueueProvider = @"chunkQueueProvider";
+NSString *const kMFLTChunksMaxConsecutiveErrorCount = @"chunksMaxConsecutiveErrorCount";
 
 #define kMFLTChunksMinimumRetryDelaySecs (5.0 * 60.0)
 #define kMFLTChunksMinimumDelayBetweenCallsSecs (0.5)
 #define kMFLTChunksBackoffFactor (2)
 #define kMFLTChunksMinimumBackoffSecs (1.0)
 #define kMFLTChunksMaximumBackoffSecs (120.0)
+#define kMFLTMaxConsecutiveErrors (100)
 
 static MemfaultApi *gMemfaultSharedApi;
 
@@ -49,6 +51,7 @@ static MemfaultApi *gMemfaultSharedApi;
     id<MemfaultChunkQueueProvider> _chunkQueueProvider;
     dispatch_time_t _chunksLastTime;
     dispatch_queue_t _chunksDispatchQueue;
+    NSInteger _chunksMaxConsecutiveErrorCount;
 
     // For testing
     NSTimeInterval _minimumRetryDelaySecs;
@@ -83,6 +86,7 @@ static MemfaultApi *gMemfaultSharedApi;
                         apiBaseURL:(NSURL *)apiBaseURL ingressBaseURL:(NSURL *)ingressBaseURL
                      chunksBaseURL:(NSURL *)chunksBaseURL
                 chunkQueueProvider:(id<MemfaultChunkQueueProvider>)chunkQueueProvider
+    chunksMaxConsecutiveErrorCount:(NSInteger)chunksMaxConsecutiveErrorCount
 {
     self = [super init];
     if (self) {
@@ -95,6 +99,7 @@ static MemfaultApi *gMemfaultSharedApi;
         _chunksDispatchQueue = dispatch_queue_create("com.memfault.chunks",
                                                      dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
                                                                                              QOS_CLASS_BACKGROUND, 0));
+        _chunksMaxConsecutiveErrorCount = chunksMaxConsecutiveErrorCount;
         _chunkSenderRegistry = [MFLTChunkSenderRegistry createRegistry:self];
         _minimumRetryDelaySecs = kMFLTChunksMinimumRetryDelaySecs;
         _minimumDelayBetweenCallsSecs = kMFLTChunksMinimumDelayBetweenCallsSecs;
@@ -140,6 +145,12 @@ static MemfaultApi *gMemfaultSharedApi;
     }
     MFLTLogDebug(@"Using chunk queue provider: %@", chunkQueueProvider);
 
+    NSNumber *chunksMaxConsecutiveErrorCount = configuration[kMFLTChunksMaxConsecutiveErrorCount];
+    if (!chunksMaxConsecutiveErrorCount) {
+        chunksMaxConsecutiveErrorCount = @(kMFLTMaxConsecutiveErrors);
+    }
+    MFLTLogDebug(@"Using chunksMaxConsecutiveErrorCount: %@", chunksMaxConsecutiveErrorCount);
+
     NSURLSession *session = configuration[kMFLTApiUrlSession];
     if (session == nil) {
         session = [NSURLSession sharedSession];
@@ -150,7 +161,8 @@ static MemfaultApi *gMemfaultSharedApi;
                                         apiBaseURL:apiBaseURL
                                     ingressBaseURL:ingressBaseURL
                                      chunksBaseURL:chunksBaseURL
-                                chunkQueueProvider:chunkQueueProvider];
+                                chunkQueueProvider:chunkQueueProvider
+                    chunksMaxConsecutiveErrorCount:[chunksMaxConsecutiveErrorCount integerValue]];
 }
 
 - (void)_doRequest:(NSURLRequest *)request completionHandler:(void(^)(NSData *data, NSURLResponse *response, NSError *error))block
@@ -486,7 +498,8 @@ static MemfaultApi *gMemfaultSharedApi;
                                               chunkQueue:chunkQueue
                                            dispatchQueue:_chunksDispatchQueue
                                                      api:self
-                                                   backoff:backoff];
+                                                   backoff:backoff
+                                maxConsecutiveErrorCount:_chunksMaxConsecutiveErrorCount];
 }
 
 @end

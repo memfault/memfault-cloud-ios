@@ -37,7 +37,7 @@ describe(@"MemfaultApi", ^{
     beforeEach(^{
         mockSession = mock([NSURLSession class]);
         api = [[MemfaultApi alloc] initApiWithSession:mockSession projectKey:projectKey apiBaseURL:apiBaseURL
-                                       ingressBaseURL:apiIngressBaseURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil];
+                                       ingressBaseURL:apiIngressBaseURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil chunksMaxConsecutiveErrorCount:100];
     });
 
     __auto_type assertDataRequest = ^(NSString *expectedMethod, NSString *expectedURLString, id expectedBodyObject){

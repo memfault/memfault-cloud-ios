@@ -143,7 +143,11 @@ lost. This can be a reason to override the default queue implementation.
 
 The library provides a "hook" to override the default queue implementation, by
 setting the `kMFLTChunkQueueProvider` configuration option to an object that
-conforms to `MemfaultChunkQueueProvider`:
+conforms to `MemfaultChunkQueueProvider`.
+
+When using a disk-backed custom queue, we also recommend setting the
+`chunksMaxConsecutiveErrorCount` configuration option to `0` to never drop
+chunks when consecutive errors occur.
 
 ```swift
 class MyQueueProvider: MemfaultChunkQueueProvider {
@@ -164,6 +168,9 @@ func bootMemfault() {
 
         // Pass the custom queue provider in the configuration:
         kMFLTChunkQueueProvider: queueProvider,
+
+        // Never drop chunks on consecutive upload errors:
+        kMFLTChunksMaxConsecutiveErrorCount: 0,
     ])
 
     // If your queue implementation persists the contents of the

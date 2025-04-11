@@ -14,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
                         apiBaseURL:(NSURL *)apiBaseURL
                     ingressBaseURL:(NSURL *)ingressBaseURL
                      chunksBaseURL:(NSURL *)chunksBaseURL
-                chunkQueueProvider:(id<MemfaultChunkQueueProvider>)chunkQueueProvider;
+                chunkQueueProvider:(id<MemfaultChunkQueueProvider>)chunkQueueProvider
+    chunksMaxConsecutiveErrorCount:(NSInteger)chunksMaxConsecutiveErrorCount;
 
 - (void)postStatusEvent:(NSString *)eventName deviceInfo:(MemfaultDeviceInfo *_Nullable)deviceInfo userInfo:(NSDictionary *_Nullable)userInfo;
 

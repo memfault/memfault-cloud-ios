@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MemfaultCloud'
-  s.version          = '3.0.0'
+  s.version          = '3.1.0'
   s.summary          = 'MemfaultCloud Podspec'
   s.description      = <<-DESC
 A minimal SDK to facilitate integration of calls to
@@ -18,7 +18,7 @@ Memfault Cloud REST APIs in iOS mobile applications
   s.homepage         = 'https://github.com/memfault/memfault-ios-cloud'
   s.license          = { :type => 'Modified BSD', :file => 'LICENSE' }
   s.author           = { 'Memfault' => 'hello@memfault.com' }
-  s.source           = { :git => 'https://github.com/memfault/memfault-ios-cloud.git', :tag => '3.0.0' }
+  s.source           = { :git => 'https://github.com/memfault/memfault-ios-cloud.git', :tag => '3.1.0' }
 
   s.ios.deployment_target = '13.0'
 

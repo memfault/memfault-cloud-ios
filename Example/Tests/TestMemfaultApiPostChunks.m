@@ -36,7 +36,7 @@ describe(@"MemfaultApi -postChunks", ^{
         mockResponses = [NSMutableArray array];
         [mockResponses addObject:mock([NSHTTPURLResponse class])];
         api = [[MemfaultApi alloc] initApiWithSession:mockSession projectKey:projectKey apiBaseURL:apiDummyURL
-                                       ingressBaseURL:apiDummyURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil];
+                                       ingressBaseURL:apiDummyURL chunksBaseURL:apiChunksBaseURL chunkQueueProvider:(id _Nonnull)nil chunksMaxConsecutiveErrorCount:100];
         api.minimumRetryDelaySecs = 0;
         api.minimumDelayBetweenCallsSecs = 0;
         boundary = nil;

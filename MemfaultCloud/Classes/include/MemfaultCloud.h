@@ -42,6 +42,13 @@ extern NSString *const kMFLTApiUrlSession;
 //! @see MemfaultChunkQueueProvider
 extern NSString *const kMFLTChunkQueueProvider;
 
+//! Configuration dictionary key to specify the maximum number of consecutive
+//! upload errors before dropping chunks. Defaults to 100 when not specified.
+//! When implementing a disk-backed custom queue, we recommend setting this
+//! to 0 to never drop chunks when consecutive errors occur.
+//! @see MemfaultChunkSender
+extern NSString *const kMFLTChunksMaxConsecutiveErrorCount;
+
 
 @interface MemfaultApi : NSObject
 //! Configures the sharedApi singleton instance. See kMFLT... constants for

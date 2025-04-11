@@ -47,3 +47,11 @@
 - Fix: better handle unexpected responses from Memfault. Fixes
   [#3](https://github.com/memfault/memfault-cloud-ios/issues/3). Thanks to
   @bgomberg for reporting the issue!
+
+## v3.1.0
+
+- Added new `kMFLTChunksMaxConsecutiveErrorCount` configuration option.
+  Previously, the SDK would start dropping chunks after 100 consecutive upload
+  errors, to prevent accumulating chunks indefinitely on the device. The
+  threshold can now be configured (defaults to 100). When set to 0, chunks are
+  never dropped.

@@ -21,6 +21,7 @@ describe(@"MFLTChunkSender", ^{
     NSData *testChunk1 = [@"CHUNK1" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *testChunk2 = [@"CHUNK2" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *testError = [NSError errorWithDomain:@"" code:-1 userInfo:nil];
+    NSInteger chunksMaxConsecutiveErrorCount = 10;
 
     __block MFLTChunkSender *sender = nil;
     __block MFLTTemporaryChunkQueue *queue = nil;
@@ -67,7 +68,12 @@ describe(@"MFLTChunkSender", ^{
         mockBackoff = mock([MFLTBackoff class]);
         [given([mockBackoff bump]) willReturnDouble:0.0];
 
-        sender = [[MFLTChunkSender alloc] initWithDeviceSerial:testSerial1 chunkQueue:queue dispatchQueue:dispatchQueue api:mockApi backoff:mockBackoff];
+        sender = [[MFLTChunkSender alloc] initWithDeviceSerial:testSerial1
+                                                    chunkQueue:queue
+                                                 dispatchQueue:dispatchQueue
+                                                           api:mockApi
+                                                       backoff:mockBackoff
+                                      maxConsecutiveErrorCount:chunksMaxConsecutiveErrorCount];
     });
 
     __auto_type waitUntilQueueDrained = ^{
@@ -91,15 +97,15 @@ describe(@"MFLTChunkSender", ^{
                                             completion:(id)anything()];
         });
 
-        it(@"drops chunks after receiving 100 consecutive errors", ^{
-            for (int i = 0; i < 100; i++) {
+        it(@"drops chunks after receiving 10 consecutive errors", ^{
+            for (int i = 0; i < chunksMaxConsecutiveErrorCount; i++) {
                 [postErrors addObject:testError];
             }
             [sender postChunks:@[testChunk1]];
 
             waitUntilQueueDrained();
 
-            [verifyCount(mockApi, times(100)) postChunks:@[testChunk1]
+            [verifyCount(mockApi, times(chunksMaxConsecutiveErrorCount)) postChunks:@[testChunk1]
                                             deviceSerial:testSerial1
                                               completion:(id)anything()];
             expect(queue.count).to.equal(0);

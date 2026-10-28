@@ -8,7 +8,7 @@ library.
 
 Before building the app, make sure to update the Project Key in
 `AppDelegate.swift`. To find your Project Key, log in to
-https://app.memfault.com/ and navigate to Settings.
+<https://app.memfault.com/> and navigate to Settings.
 
 ```swift
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -33,32 +33,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 Add this line to your dependencies list in your Package.swift:
 
+```swift
+.package(name: "MemfaultCloud", url: "https://github.com/memfault/memfault-cloud-ios.git", from: "3.1.1"),
 ```
-.package(name: "MemfaultCloud", url: "https://github.com/memfault/memfault-ios-cloud.git", from: "2.2.1"),
-```
-
-#### CocoaPods
-
-In case you are using CocoaPods, you can add `MemfaultCloud` as a dependency to
-your `Podfile`:
-
-```
-target 'MyApp' do
-  pod 'MemfaultCloud'
-end
-```
-
-It's probably a good idea to specify the version to use. See the [Podfile
-documentation] for more information.
-
-After adding the new dependency, run `pod install` inside your terminal, or from
-CocoaPods.app.
 
 #### Without dependency manager
 
-To use `MemfaultCloud` without using a dependency manager such as CocoaPods,
-just clone this repo and add the `.h` and `.m` files inside `MemfaultCloud`
-folder to your project.
+To use `MemfaultCloud` without a dependency manager, just clone this repo and
+add the `.h` and `.m` files inside the `MemfaultCloud` folder to your project.
 
 ### Configuration
 
@@ -73,7 +55,7 @@ only once by passing a configuration dictionary to
 `MemfaultApi.configureSharedApi([...])`
 
 The Project Key is the only mandatory piece of configuration. To find your
-Project Key, log in to https://app.memfault.com/ and navigate to Settings.
+Project Key, log in to <https://app.memfault.com/> and navigate to Settings.
 
 ```swift
 MemfaultApi.configureSharedApi([
@@ -201,4 +183,3 @@ Product > Test (cmd + U).
 See [CHANGELOG.md] file.
 
 [changelog.md]: CHANGELOG.md
-[podfile documentation]: https://guides.cocoapods.org/syntax/podfile.html#pod

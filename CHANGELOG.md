@@ -55,3 +55,8 @@
   errors, to prevent accumulating chunks indefinitely on the device. The
   threshold can now be configured (defaults to 100). When set to 0, chunks are
   never dropped.
+
+## v3.1.1
+
+- Removed CocoaPods installation instructions from the README, since CocoaPods
+  is going read-only. Use Swift Package Manager instead.
